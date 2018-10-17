@@ -20,12 +20,33 @@ import { markdown } from 'stencil-markdown';
 
 export const config: Config = {
   plugins: [
-    makdown()
+    markdown()
   ]
 };
 ```
 
-During development, this plugin will kick-in for **explicitly imported** `.md` or `.markdown` files, and convert them to JSX.
+During development, this plugin will kick-in for **explicitly imported** `.md` or `.markdown` files, and convert them to a FunctionalComponent.
+
+#### my-component.ts
+```tsx
+import { Component } from '@stencil/core';
+import Content from '../../docs/hello-world.md';
+
+@Component({
+  tag: 'my-component'
+})
+export class MyComponent {
+  render() {
+    return (
+      <div>
+        <Content/>
+      </div>
+    )
+  }
+}
+```
+
+
 
 
 ## Options
