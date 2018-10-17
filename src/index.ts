@@ -4,6 +4,7 @@ import frontmatter from 'frontmatter';
 import * as d from './declarations';
 import * as util from './util';
 
+
 export { MarkdownFile } from './declarations';
 export function markdown(_opts: d.PluginOptions = {}): d.Plugin {
   return {
@@ -16,13 +17,13 @@ export function markdown(_opts: d.PluginOptions = {}): d.Plugin {
       const data = parsedMarkdown.data || null;
       const content = marked.parse(parsedMarkdown.content);
 
-      const file = `export const data = ${JSON.stringify(data)}
+      const file = `export const frontmatter = ${JSON.stringify(data)};
 export const { vchildren: content } = (() => (
   <div>
     ${content}
   </div>)
 )();
-export default content;`;
+export default () => content;`;
 
       const code = ts.transpileModule(file, {
         compilerOptions: {
