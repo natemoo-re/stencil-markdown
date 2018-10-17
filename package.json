@@ -37,14 +37,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/stencil-sass.git"
+    "url": "git+https://github.com/natemoo-re/stencil-markdown.git"
   },
   "author": "Ionic Team",
-  "homepage": "https://stenciljs.com/",
-  "description": "The Stencil Sass Plugin",
+  "homepage": "https://github.com/natemoo-re/stencil-markdown/",
+  "description": "Stencil Markdown Plugin",
   "keywords": [
     "stencil",
-    "sass"
+    "markdown"
   ],
   "jest": {
     "transform": {
