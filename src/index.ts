@@ -1,50 +1,41 @@
-import { render } from 'node-sass';
-import { loadDiagnostic } from './diagnostics';
+import * as ts from 'typescript';
+import * as marked from 'marked';
+import frontmatter from 'frontmatter';
 import * as d from './declarations';
 import * as util from './util';
 
-
-export function sass(opts: d.PluginOptions = {}) {
-
+export { MarkdownFile } from './declarations';
+export function markdown(_opts: d.PluginOptions = {}): d.Plugin {
   return {
-    name: 'sass',
+    name: 'markdown',
+    transform(sourceText: string, fileName: string) {
+      if (!util.usePlugin(fileName)) { return null; }
 
-    transform(sourceText: string, fileName: string, context: d.PluginCtx) {
-      if (!context || !util.usePlugin(fileName)) {
-        return null;
-      }
+      const fileId = util.createResultsId(fileName);
+      const parsedMarkdown = frontmatter(sourceText);
+      const data = parsedMarkdown.data || null;
+      const content = marked.parse(parsedMarkdown.content);
 
-      const renderOpts = util.getRenderOptions(opts, sourceText, fileName, context);
+      const file = `export const data = ${JSON.stringify(data)}
+export const { vchildren: content } = (() => (
+  <div>
+    ${content}
+  </div>)
+)();
+export default content;`;
 
-      const results: d.PluginTransformResults = {
-        id: util.createResultsId(fileName)
-      };
+      const code = ts.transpileModule(file, {
+        compilerOptions: {
+          jsx: ts.JsxEmit.React,
+          jsxFactory: 'h',
+          module: ts.ModuleKind.ES2015,
+          target: ts.ScriptTarget.ESNext
+        }
+      }).outputText;
 
-      if (sourceText.trim() === '') {
-        results.code = '';
-        return Promise.resolve(results);
-      }
+      const results: d.PluginTransformResults = { id: fileId, code };
 
-      return new Promise<d.PluginTransformResults>(resolve => {
-
-        render(renderOpts, (err: any, sassResult: any) => {
-          if (err) {
-            loadDiagnostic(context, err, fileName);
-            results.code = `/**  sass error${err && err.message ? ': ' + err.message : ''}  **/`;
-            resolve(results);
-
-          } else {
-            results.code = sassResult.css.toString();
-
-            // write this css content to memory only so it can be referenced
-            // later by other plugins (autoprefixer)
-            // but no need to actually write to disk
-            context.fs.writeFile(results.id, results.code, { inMemoryOnly: true }).then(() => {
-              resolve(results);
-            });
-          }
-        });
-      });
+      return Promise.resolve(results);
     }
   };
 }

@@ -6,7 +6,8 @@ export default {
 
   external: [
     'path',
-    'node-sass'
+    'marked',
+    'front-matter'
   ],
 
   output: [

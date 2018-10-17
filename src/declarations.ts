@@ -1,8 +1,24 @@
-import { Options } from 'node-sass';
+import { MarkedOptions } from 'marked';
 
+export interface MarkdownFile {
+  headers: { text: string, level: number, id: string }[];
+  content: any;
+}
 
-export interface PluginOptions extends Options {
-  injectGlobalPaths?: string[];
+export interface Plugin {
+  load?: (id: string, context?: PluginCtx) => Promise<string>;
+  name: string;
+  resolveId?: (importee: string, importer: string, context?: PluginCtx) => Promise<string>;
+  transform?: (sourceText: string, id: string, context: PluginCtx) => Promise<PluginTransformResults>;
+}
+
+export interface MarkedTransform {
+  src?: string;
+  dest?: string;
+}
+
+export interface PluginOptions extends MarkedOptions {
+  transform?: MarkedTransform[];
 }
 
 export interface PluginTransformResults {
