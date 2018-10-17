@@ -10,7 +10,9 @@
   ],
   "scripts": {
     "prebuild": "rimraf ./dist && npm run test && npm run lint",
+    "copy": "cp src/markdown.d.ts dist/markdown.d.ts",
     "build": "tsc && npm run rollup",
+    "postbuild": "npm run copy",
     "watch": "tsc --watch",
     "rollup": "rollup -c",
     "version": "npm run build",
