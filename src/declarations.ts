@@ -1,10 +1,5 @@
 import { MarkedOptions } from 'marked';
 
-export interface MarkdownFile {
-  headers: { text: string, level: number, id: string }[];
-  content: any;
-}
-
 export interface Plugin {
   load?: (id: string, context?: PluginCtx) => Promise<string>;
   name: string;
@@ -12,14 +7,7 @@ export interface Plugin {
   transform?: (sourceText: string, id: string, context: PluginCtx) => Promise<PluginTransformResults>;
 }
 
-export interface MarkedTransform {
-  src?: string;
-  dest?: string;
-}
-
-export interface PluginOptions extends MarkedOptions {
-  transform?: MarkedTransform[];
-}
+export interface PluginOptions extends MarkedOptions { }
 
 export interface PluginTransformResults {
   code?: string;
