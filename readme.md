@@ -46,6 +46,12 @@ export class MyComponent {
 }
 ```
 
+In order to allow Typescript to import .md or .markdown files, please add the following file to your project in the `src/` directory.
+#### index.d.ts
+```ts
+import 'stencil-markdown';
+```
+
 ## Frontmatter
 Stencil Markdown parses YAML Frontmatter—no configuration needed.
 
