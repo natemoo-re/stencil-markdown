@@ -1,4 +1,6 @@
 import * as d from './declarations';
+import * as ts from 'typescript';
+import { MarkedOptions } from 'marked';
 // import * as path from 'path';
 
 
@@ -6,49 +8,31 @@ export function usePlugin(fileName: string) {
   return /(\.md|\.markdown)$/i.test(fileName);
 }
 
+export function getTSXOutput({ data, content }: { data: any, content: string }) {
+  const file = `export const frontmatter = ${JSON.stringify(data)};
+export const { vchildren: content } = (() => (
+  <div>
+    ${content}
+  </div>)
+)();
+export default () => content;`;
 
-export function getRenderOptions(opts: d.PluginOptions, _sourceText: string, _fileName: string, _context: d.PluginCtx) {
+  const tsModule = ts.transpileModule(file, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.React,
+      jsxFactory: 'h',
+      module: ts.ModuleKind.ES2015,
+      target: ts.ScriptTarget.ESNext
+    }
+  });
+
+  return tsModule.outputText;
+}
+
+
+export function getRenderOptions(opts: d.PluginOptions): MarkedOptions {
   // create a copy of the original sass config so we don't change it
   const renderOpts = Object.assign({}, opts);
-
-  // // always set "data" from the source text
-  // renderOpts.data = sourceText;
-
-  // renderOpts.includePaths = Array.isArray(opts.includePaths) ? opts.includePaths.slice() : [];
-
-  // // add the directory of the source file to includePaths
-  // renderOpts.includePaths.push(path.dirname(fileName));
-
-  // renderOpts.includePaths = renderOpts.includePaths.map(includePath => {
-  //   if (path.isAbsolute(includePath)) {
-  //     return includePath;
-  //   }
-  //   // if it's a relative path then resolve it with the project's root directory
-  //   return path.resolve(context.config.rootDir, includePath);
-  // });
-
-  // const injectGlobalPaths = Array.isArray(opts.injectGlobalPaths) ? opts.injectGlobalPaths.slice() : [];
-
-  // if (injectGlobalPaths.length > 0) {
-  //   // automatically inject each of these paths into the source text
-  //   const injectText = injectGlobalPaths.map(injectGlobalPath => {
-  //     if (!path.isAbsolute(injectGlobalPath)) {
-  //       // convert any relative paths to absolute paths relative to the project root
-  //       injectGlobalPath = normalizePath(path.join(context.config.rootDir, injectGlobalPath));
-  //     }
-
-  //     return `@import "${injectGlobalPath}";`;
-  //   }).join('');
-
-  //   renderOpts.data = injectText + renderOpts.data;
-  // }
-
-  // // remove non-standard node-sass option
-  // delete renderOpts.injectGlobalPaths;
-
-  // // the "file" config option is not valid here
-  // delete renderOpts.file;
-
   return renderOpts;
 }
 
