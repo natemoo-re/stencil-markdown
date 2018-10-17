@@ -7,7 +7,8 @@ export default {
   external: [
     'path',
     'marked',
-    'front-matter'
+    'front-matter',
+    './markdown.d.ts'
   ],
 
   output: [
