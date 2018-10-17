@@ -46,8 +46,42 @@ export class MyComponent {
 }
 ```
 
+## Frontmatter
+Stencil Markdown parses YAML Frontmatter—no configuration needed.
+
+#### hello-world.md
+```md
+---
+title: Hello world!
+---
+## Hey, world!
+```
 
 
+
+#### my-component.ts
+```tsx
+import { Component } from '@stencil/core';
+import Content, { frontmatter } from '../../docs/hello-world.md';
+
+@Component({
+  tag: 'my-component'
+})
+export class MyComponent {
+
+  componentWillLoad() {
+    console.log(frontmatter);
+  }
+  
+  render() {
+    return (
+      <div>
+        <Content/>
+      </div>
+    )
+  }
+}
+```
 
 ## Options
 
